@@ -2,82 +2,89 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AR Measure</title>
-    <script src="https://aframe.io/releases/0.9.2/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/aframe-ar.js@2.0.0/dist/aframe-ar.js"></script>
+    <title>Upload & View AR Model with Supabase</title>
+    <script
+      type="module"
+      src="https://unpkg.com/@supabase/supabase-js"
+    ></script>
+    <script
+      type="module"
+      src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
+    ></script>
     <style>
       body {
-        margin: 0;
-        overflow: hidden;
+        font-family: sans-serif;
+        text-align: center;
+        background-color: #f5f5f5;
+        padding: 20px;
       }
-      canvas {
-        display: block;
+
+      #uploader {
+        margin-bottom: 20px;
       }
-      #distance {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        color: white;
-        font-size: 24px;
-        background: rgba(0, 0, 0, 0.5);
-        padding: 10px;
-        border-radius: 5px;
+
+      model-viewer {
+        width: 100%;
+        max-width: 600px;
+        height: 500px;
+        background-color: #eee;
+        border: 1px solid #ccc;
+        border-radius: 10px;
       }
     </style>
   </head>
   <body>
-    <a-scene embedded arjs>
-      <!-- Marker untuk AR -->
-      <a-marker preset="hiro" id="marker">
-        <!-- Objek AR -->
-        <a-box position="0 0.5 0" material="color: red;"></a-box>
-      </a-marker>
+    <h1>Upload & View 3D Model in AR (Supabase)</h1>
+    <input id="uploader" type="file" accept=".glb" />
+    <br />
+    <model-viewer
+      id="viewer"
+      ar
+      ar-modes="scene-viewer webxr quick-look"
+      auto-rotate
+      camera-controls
+      shadow-intensity="1"
+      exposure="1"
+      alt="3D model preview"
+    >
+    </model-viewer>
 
-      <!-- Kamera AR -->
-      <a-camera static-body></a-camera>
-    </a-scene>
+    <script type="module">
+      import { createClient } from "https://esm.sh/@supabase/supabase-js";
 
-    <!-- Menampilkan jarak di layar -->
-    <div id="distance">Distance: 0</div>
+      // Ganti dengan konfigurasi milik kamu
+      const supabase = createClient(
+        "https://vhvutylrjcungzatsojf.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZodnV0eWxyamN1bmd6YXRzb2pmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1Nzk2MDgsImV4cCI6MjA2MTE1NTYwOH0.NcEO4DsnxJaWq7lWMMLU0TP-e37xOWeuUQXoWP1kXj0"
+      );
 
-    <script>
-      // Mendapatkan referensi elemen untuk menampilkan jarak
-      const distanceElement = document.getElementById("distance");
+      const uploader = document.getElementById("uploader");
+      const viewer = document.getElementById("viewer");
 
-      let firstPoint = null; // Titik pertama yang diklik
-      let secondPoint = null; // Titik kedua yang diklik
+      uploader.addEventListener("change", async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
 
-      // Fungsi untuk menghitung jarak antara dua titik
-      function calculateDistance(point1, point2) {
-        const dx = point2.x - point1.x;
-        const dy = point2.y - point1.y;
-        const dz = point2.z - point1.z;
-        return Math.sqrt(dx * dx + dy * dy + dz * dz);
-      }
+        const fileName = `${Date.now()}-${file.name}`;
 
-      // Menangani klik untuk menentukan titik pertama dan kedua
-      document
-        .querySelector("a-scene")
-        .addEventListener("click", function (event) {
-          const intersection = event.detail.intersection; // Titik di mana pengguna mengklik
+        // Upload ke Supabase Storage (bucket: "models")
+        const { data, error } = await supabase.storage
+          .from("models") // Ganti dengan nama bucket kamu
+          .upload(fileName, file);
 
-          if (firstPoint === null) {
-            // Titik pertama yang diklik
-            firstPoint = intersection.point;
-          } else {
-            // Titik kedua yang diklik
-            secondPoint = intersection.point;
+        if (error) {
+          alert("Upload failed: " + error.message);
+          return;
+        }
 
-            // Menghitung jarak antara kedua titik
-            if (secondPoint) {
-              const distance = calculateDistance(firstPoint, secondPoint);
-              distanceElement.innerHTML = `Distance: ${distance.toFixed(
-                2
-              )} meters`;
-            }
-          }
-        });
+        // Dapatkan public URL
+        const { data: publicUrlData } = supabase.storage
+          .from("models")
+          .getPublicUrl(fileName);
+
+        viewer.src = publicUrlData.publicUrl;
+        console.log("Model loaded:", publicUrlData.publicUrl);
+      });
     </script>
   </body>
 </html>
