@@ -1,22 +1,43 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Simple WebAR</title>
+    <title>AR Model Viewer</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ar.js@3.3.2/aframe/build/aframe-ar.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+      #loading {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        color: black;
+        font-family: sans-serif;
+        z-index: 999;
+      }
+    </style>
   </head>
-  <body style="margin: 0; overflow: hidden">
+  <body>
+    <div id="loading">📦 Loading model...</div>
+
     <a-scene embedded arjs>
-      <!-- Gunakan marker default: "hiro" -->
+      <!-- Marker Hiro (default AR.js marker) -->
       <a-marker preset="hiro">
-        <!-- Model GLTF/GLB -->
+        <!-- Model GLB dari folder lokal -->
         <a-entity
-          gltf-model="model/modelku.glb"
+          gltf-model="modelku.glb"
           scale="0.5 0.5 0.5"
           position="0 0 0"
+          rotation="0 0 0"
+          animation-mixer
+          event-set__loaded="_event: model-loaded; _target: #loading; visible: false"
         >
         </a-entity>
       </a-marker>
+
+      <!-- Kamera AR -->
       <a-entity camera></a-entity>
     </a-scene>
   </body>
