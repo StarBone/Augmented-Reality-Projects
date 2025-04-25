@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Upload & View AR Model with Supabase</title>
+    <script
+      type="module"
+      src="https://unpkg.com/@supabase/supabase-js"
+    ></script>
+    <script
+      type="module"
+      src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
+    ></script>
+    <style>
+      body {
+        font-family: sans-serif;
+        text-align: center;
+        background-color: #f5f5f5;
+        padding: 20px;
+      }
+
+      #uploader {
+        margin-bottom: 20px;
+      }
+
+      model-viewer {
+        width: 100%;
+        max-width: 600px;
+        height: 500px;
+        background-color: #eee;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Upload & View 3D Model in AR (Supabase)</h1>
+    <input id="uploader" type="file" accept=".glb" />
+    <br />
+    <model-viewer
+      id="viewer"
+      ar
+      ar-modes="scene-viewer webxr quick-look"
+      auto-rotate
+      camera-controls
+      shadow-intensity="1"
+      exposure="1"
+      alt="3D model preview"
+    >
+    </model-viewer>
+
+    <script type="module">
+      import { createClient } from "https://esm.sh/@supabase/supabase-js";
+
+      // Ganti dengan konfigurasi milik kamu
+      const supabase = createClient(
+        "https://vhvutylrjcungzatsojf.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZodnV0eWxyamN1bmd6YXRzb2pmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1Nzk2MDgsImV4cCI6MjA2MTE1NTYwOH0.NcEO4DsnxJaWq7lWMMLU0TP-e37xOWeuUQXoWP1kXj0"
+      );
+
+      const uploader = document.getElementById("uploader");
+      const viewer = document.getElementById("viewer");
+
+      uploader.addEventListener("change", async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const fileName = `${Date.now()}-${file.name}`;
+
+        // Upload ke Supabase Storage (bucket: "models")
+        const { data, error } = await supabase.storage
+          .from("models") // Ganti dengan nama bucket kamu
+          .upload(fileName, file);
+
+        if (error) {
+          alert("Upload failed: " + error.message);
+          return;
+        }
+
+        // Dapatkan public URL
+        const { data: publicUrlData } = supabase.storage
+          .from("models")
+          .getPublicUrl(fileName);
+
+        viewer.src = publicUrlData.publicUrl;
+        console.log("Model loaded:", publicUrlData.publicUrl);
+      });
+    </script>
+  </body>
+</html>

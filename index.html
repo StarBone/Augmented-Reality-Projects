@@ -2,11 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Upload & View AR Model with Supabase</title>
-    <script
-      type="module"
-      src="https://unpkg.com/@supabase/supabase-js"
-    ></script>
+    <title>Upload & View AR Model</title>
     <script
       type="module"
       src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
@@ -34,7 +30,7 @@
     </style>
   </head>
   <body>
-    <h1>Upload & View 3D Model in AR (Supabase)</h1>
+    <h1>Upload & View 3D Model in AR</h1>
     <input id="uploader" type="file" accept=".glb" />
     <br />
     <model-viewer
@@ -49,41 +45,16 @@
     >
     </model-viewer>
 
-    <script type="module">
-      import { createClient } from "https://esm.sh/@supabase/supabase-js";
-
-      // Ganti dengan konfigurasi milik kamu
-      const supabase = createClient(
-        "https://vhvutylrjcungzatsojf.supabase.co",
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZodnV0eWxyamN1bmd6YXRzb2pmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1Nzk2MDgsImV4cCI6MjA2MTE1NTYwOH0.NcEO4DsnxJaWq7lWMMLU0TP-e37xOWeuUQXoWP1kXj0"
-      );
-
+    <script>
       const uploader = document.getElementById("uploader");
       const viewer = document.getElementById("viewer");
 
-      uploader.addEventListener("change", async (event) => {
+      uploader.addEventListener("change", (event) => {
         const file = event.target.files[0];
         if (!file) return;
 
-        const fileName = `${Date.now()}-${file.name}`;
-
-        // Upload ke Supabase Storage (bucket: "models")
-        const { data, error } = await supabase.storage
-          .from("models") // Ganti dengan nama bucket kamu
-          .upload(fileName, file);
-
-        if (error) {
-          alert("Upload failed: " + error.message);
-          return;
-        }
-
-        // Dapatkan public URL
-        const { data: publicUrlData } = supabase.storage
-          .from("models")
-          .getPublicUrl(fileName);
-
-        viewer.src = publicUrlData.publicUrl;
-        console.log("Model loaded:", publicUrlData.publicUrl);
+        const url = URL.createObjectURL(file);
+        viewer.src = url;
       });
     </script>
   </body>
