@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>3D Models Gallery</title>
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script
       type="module"
@@ -51,8 +52,6 @@
           View Model
         </button>
       </div>
-
-      <!-- Tambah kartu lain -->
     </main>
 
     <footer class="text-center p-4 mt-auto text-gray-500">
@@ -88,26 +87,21 @@
 
     <script>
       function openModal(modelUrl) {
-        // Menutup modal jika sudah terbuka sebelumnya
         const modal = document.getElementById("modal");
         if (modal.style.display === "flex") {
-          closeModal(); // Menutup modal yang sudah terbuka
+          closeModal();
         }
 
-        // Mengatur model baru pada model-viewer
         const modelViewer = document.getElementById("modelViewer");
         modelViewer.setAttribute("src", modelUrl);
 
-        // Membuka modal baru
         modal.style.display = "flex";
       }
 
       function closeModal() {
         const modal = document.getElementById("modal");
-        // Menutup modal dengan mengubah display menjadi none
         modal.style.display = "none";
 
-        // Mengosongkan src pada model viewer untuk menghindari model yang tertinggal
         const modelViewer = document.getElementById("modelViewer");
         modelViewer.setAttribute("src", "");
       }
