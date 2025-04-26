@@ -2,56 +2,99 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>AR Viewer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>3D Models Gallery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script
       type="module"
       src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
     ></script>
-    <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body class="min-h-screen bg-gradient-to-r from-blue-100 to-blue-200 flex flex-col items-center justify-center px-4 py-8">
-    <h1 class="text-3xl font-semibold text-gray-800 mb-6 text-center">AR Viewer</h1>
+  <body class="bg-gray-100 min-h-screen flex flex-col">
+    <header class="bg-white shadow p-4">
+      <h1 class="text-2xl font-bold text-center">My 3D Model Gallery</h1>
+    </header>
 
-    <!-- Custom styled file upload -->
-    <label
-      for="uploader"
-      class="mb-6 px-5 py-2 bg-green-500 text-white text-center rounded-md hover:bg-green-600 cursor-pointer transition-colors duration-200"
-    >
-      Choose 3D Model (.glb)
-    </label>
-    <input
-      id="uploader"
-      type="file"
-      accept=".glb"
-      class="hidden"
-    />
-
-    <div class="w-full max-w-3xl bg-white rounded-2xl shadow-lg p-4 hover:scale-[1.01] transition-transform duration-300">
-      <model-viewer
-        id="viewer"
-        class="w-full h-[500px] rounded-xl bg-gray-100"
-        ar
-        ar-modes="scene-viewer webxr quick-look"
-        auto-rotate
-        camera-controls
-        shadow-intensity="1"
-        exposure="1"
-        alt="3D model preview"
+    <main class="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <!-- Card 1 -->
+      <div
+        class="bg-white rounded-2xl shadow hover:shadow-lg transition p-4 flex flex-col"
       >
-      </model-viewer>
+        <img
+          src="thumbnail1.jpg"
+          alt="Model 1"
+          class="rounded-xl object-cover h-48"
+        />
+        <h2 class="mt-4 font-semibold text-lg">Model Name 1</h2>
+        <button
+          onclick="openModal('models/gura.glb')"
+          class="mt-auto text-center bg-blue-500 text-white rounded-xl py-2 mt-4 hover:bg-blue-600"
+        >
+          View Model
+        </button>
+      </div>
+
+      <!-- Card 2 -->
+      <div
+        class="bg-white rounded-2xl shadow hover:shadow-lg transition p-4 flex flex-col"
+      >
+        <img
+          src="thumbnail2.jpg"
+          alt="Model 2"
+          class="rounded-xl object-cover h-48"
+        />
+        <h2 class="mt-4 font-semibold text-lg">Model Name 2</h2>
+        <button
+          onclick="openModal('https://modelviewer.dev/shared-assets/models/RobotExpressive.glb')"
+          class="mt-auto text-center bg-blue-500 text-white rounded-xl py-2 mt-4 hover:bg-blue-600"
+        >
+          View Model
+        </button>
+      </div>
+
+      <!-- Tambah kartu lain -->
+    </main>
+
+    <footer class="text-center p-4 mt-auto text-gray-500">
+      &copy; 2025 My Gallery
+    </footer>
+
+    <!-- Modal -->
+    <div
+      id="modal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50"
+    >
+      <div class="bg-white rounded-2xl p-6 relative w-11/12 max-w-3xl">
+        <button
+          onclick="closeModal()"
+          class="absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-2xl"
+        >
+          &times;
+        </button>
+        <model-viewer
+          id="modelViewer"
+          src=""
+          ar
+          ar-modes="scene-viewer webxr quick-look"
+          auto-rotate
+          camera-controls
+          shadow-intensity="1"
+          style="width: 100%; height: 500px"
+        >
+        </model-viewer>
+      </div>
     </div>
 
     <script>
-      const uploader = document.getElementById("uploader");
-      const viewer = document.getElementById("viewer");
+      function openModal(modelUrl) {
+        const modelViewer = document.getElementById("modelViewer");
+        modelViewer.setAttribute("src", modelUrl);
+        document.getElementById("modal").classList.remove("hidden");
+      }
 
-      uploader.addEventListener("change", (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        const url = URL.createObjectURL(file);
-        viewer.src = url;
-      });
+      function closeModal() {
+        document.getElementById("modal").classList.add("hidden");
+      }
     </script>
   </body>
 </html>
