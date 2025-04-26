@@ -12,7 +12,7 @@
   </head>
   <body class="bg-gray-100 min-h-screen flex flex-col">
     <header class="bg-white shadow p-4">
-      <h1 class="text-2xl font-bold text-center">My 3D Model Gallery</h1>
+      <h1 class="text-2xl font-bold text-center">Coba</h1>
     </header>
 
     <main class="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -25,9 +25,9 @@
           alt="Model 1"
           class="rounded-xl object-cover h-48"
         />
-        <h2 class="mt-4 font-semibold text-lg">Model Name 1</h2>
+        <h2 class="mt-4 font-semibold text-lg">Model 1</h2>
         <button
-          onclick="openModal('gura')"
+          onclick="openModal('models/villa1.glb')"
           class="mt-auto text-center bg-blue-500 text-white rounded-xl py-2 mt-4 hover:bg-blue-600"
         >
           View Model
@@ -43,9 +43,9 @@
           alt="Model 2"
           class="rounded-xl object-cover h-48"
         />
-        <h2 class="mt-4 font-semibold text-lg">Model Name 2</h2>
+        <h2 class="mt-4 font-semibold text-lg">Model 2</h2>
         <button
-          onclick="openModal('robot')"
+          onclick="openModal('models/pos_kamling.glb')"
           class="mt-auto text-center bg-blue-500 text-white rounded-xl py-2 mt-4 hover:bg-blue-600"
         >
           View Model
@@ -62,7 +62,8 @@
     <!-- Modal -->
     <div
       id="modal"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      style="display: none"
     >
       <div class="bg-white rounded-2xl p-6 relative w-11/12 max-w-3xl">
         <button
@@ -86,24 +87,29 @@
     </div>
 
     <script>
-      function openModal(modelName) {
-        const modelViewer = document.getElementById("modelViewer");
-        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-        
-        // Choose model file based on platform
-        let modelUrl = '';
-        if (modelName === 'gura') {
-          modelUrl = isIOS ? 'models/gura.usdz' : 'models/gura.glb';
-        } else if (modelName === 'robot') {
-          modelUrl = isIOS ? 'models/RobotExpressive.usdz' : 'https://modelviewer.dev/shared-assets/models/RobotExpressive.glb';
+      function openModal(modelUrl) {
+        // Menutup modal jika sudah terbuka sebelumnya
+        const modal = document.getElementById("modal");
+        if (modal.style.display === "flex") {
+          closeModal(); // Menutup modal yang sudah terbuka
         }
-        
+
+        // Mengatur model baru pada model-viewer
+        const modelViewer = document.getElementById("modelViewer");
         modelViewer.setAttribute("src", modelUrl);
-        document.getElementById("modal").classList.remove("hidden");
+
+        // Membuka modal baru
+        modal.style.display = "flex";
       }
 
       function closeModal() {
-        document.getElementById("modal").classList.add("hidden");
+        const modal = document.getElementById("modal");
+        // Menutup modal dengan mengubah display menjadi none
+        modal.style.display = "none";
+
+        // Mengosongkan src pada model viewer untuk menghindari model yang tertinggal
+        const modelViewer = document.getElementById("modelViewer");
+        modelViewer.setAttribute("src", "");
       }
     </script>
   </body>
