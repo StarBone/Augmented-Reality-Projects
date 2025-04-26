@@ -2,20 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Upload & View AR Model</title>
-    <link rel="stylesheet" href="style.css">
+    <title>AR Viewer</title>
     <script
       type="module"
       src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
     ></script>
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body>
-    <h1>Upload & View 3D Model in AR</h1>
-    <input id="uploader" type="file" accept=".glb" />
+  <body class="min-h-screen bg-gradient-to-r from-blue-100 to-blue-200 flex flex-col items-center justify-center px-4 py-8">
+    <h1 class="text-3xl font-semibold text-gray-800 mb-6 text-center">AR Viewer</h1>
 
-    <div class="viewer-container">
+    <!-- Custom styled file upload -->
+    <label
+      for="uploader"
+      class="mb-6 px-5 py-2 bg-green-500 text-white text-center rounded-md hover:bg-green-600 cursor-pointer transition-colors duration-200"
+    >
+      Choose 3D Model (.glb)
+    </label>
+    <input
+      id="uploader"
+      type="file"
+      accept=".glb"
+      class="hidden"
+    />
+
+    <div class="w-full max-w-3xl bg-white rounded-2xl shadow-lg p-4 hover:scale-[1.01] transition-transform duration-300">
       <model-viewer
         id="viewer"
+        class="w-full h-[500px] rounded-xl bg-gray-100"
         ar
         ar-modes="scene-viewer webxr quick-look"
         auto-rotate
