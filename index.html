@@ -27,7 +27,7 @@
         />
         <h2 class="mt-4 font-semibold text-lg">Model Name 1</h2>
         <button
-          onclick="openModal('models/gura.glb')"
+          onclick="openModal('gura')"
           class="mt-auto text-center bg-blue-500 text-white rounded-xl py-2 mt-4 hover:bg-blue-600"
         >
           View Model
@@ -45,7 +45,7 @@
         />
         <h2 class="mt-4 font-semibold text-lg">Model Name 2</h2>
         <button
-          onclick="openModal('https://modelviewer.dev/shared-assets/models/RobotExpressive.glb')"
+          onclick="openModal('robot')"
           class="mt-auto text-center bg-blue-500 text-white rounded-xl py-2 mt-4 hover:bg-blue-600"
         >
           View Model
@@ -86,8 +86,18 @@
     </div>
 
     <script>
-      function openModal(modelUrl) {
+      function openModal(modelName) {
         const modelViewer = document.getElementById("modelViewer");
+        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+        
+        // Choose model file based on platform
+        let modelUrl = '';
+        if (modelName === 'gura') {
+          modelUrl = isIOS ? 'models/gura.usdz' : 'models/gura.glb';
+        } else if (modelName === 'robot') {
+          modelUrl = isIOS ? 'models/RobotExpressive.usdz' : 'https://modelviewer.dev/shared-assets/models/RobotExpressive.glb';
+        }
+        
         modelViewer.setAttribute("src", modelUrl);
         document.getElementById("modal").classList.remove("hidden");
       }
